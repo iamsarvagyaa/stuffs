@@ -1,0 +1,40 @@
+---
+# tasks file for Golang packages
+
+- name: "Install list of gopkgs with go install"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  ansible.builtin.shell: "bash -ilc 'go install -v {{ item }}'"
+  with_items:
+    - "{{ go_install_pkgs }}"
+  when:
+    - go_install_pkgs is defined
+    - go_install_pkgs | length > 0
+  register: _go_install_pkgs
+
+- name: "Show go install pkgs output"
+  ansible.builtin.debug:
+    msg: "{{  _go_install_pkgs.stdout_lines }}"
+  when:
+    - _go_install_pkgs is changed
+    - enable_debug | default(false) | bool
+
+- name: "Install list of gopkgs with go get"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  ansible.builtin.shell: "bash -ilc 'go get -v {{ item }}'"
+  with_items:
+    - "{{ go_get_pkgs }}"
+  when:
+    - go_get_pkgs is defined
+    - go_get_pkgs | length > 0%
+  register: _go_get_pkgs
+
+- name: "Show go get pkgs output"
+  ansible.builtin.debug:
+    msg: "{{  _go_get_pkgs.stdout_lines }}"
+  when:
+    - _go_get_pkgs is changed
+    - enable_debug | default(false) | bool

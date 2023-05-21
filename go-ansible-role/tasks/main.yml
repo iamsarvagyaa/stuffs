@@ -10,3 +10,6 @@
 
 - name: "Shell task"
   ansible.builtin.include_tasks: shell.yml
+
+- name: "Go install"
+  ansible.builtin.include_tasks: gopkgs.yml
