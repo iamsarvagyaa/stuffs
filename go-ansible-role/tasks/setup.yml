@@ -1,0 +1,40 @@
+---
+# setup task
+
+- name: "Download go source tarball"
+  register: go_download
+  ansible.builtin.get_url:
+    mode: 0755
+    url: "{{ go_source_url }}"
+    dest: "{{ go_source_dest }}"
+    checksum: "{{ go_source_checksum | default(omit) }}"
+
+- name: "Show download status"
+  ansible.builtin.debug:
+    msg: "Downloaded: {{ go_download.dest }}"
+  when:
+    - go_download is changed
+    - enable_debug | default(false) | bool
+
+- name: "Extract go source tarball"
+  changed_when: false
+  register: go_extract
+  ansible.builtin.unarchive:
+    mode: 0755
+    remote_src: true
+    src: "{{ go_source_dest }}"
+    dest: "{{ go_source_dest | dirname }}"
+    creates: "{{ go_source_dest | dirname }}/go"
+  when:
+    - go_download is succeeded
+
+- name: "Move go source to {{ go_root }}"
+  args:
+    removes: "/tmp/go"
+    creates: "{{ go_root }}"
+    executable: /bin/bash
+  when:
+    - go_extract is succeeded
+    - go_download is succeeded
+  register: go_move
+  ansible.builtin.shell: "mv {{ go_source_dest | dirname }}/go {{ go_root }}"

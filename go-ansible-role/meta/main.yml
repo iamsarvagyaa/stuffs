@@ -1,0 +1,20 @@
+---
+# meta information
+
+galaxy_info:
+  role_name: "golang"
+  author: "Sarvagya Sagar"
+  namespace: "iamsarvagyaa"
+  description: "Manage Go Installation"
+  license: "license (BSD, MIT)"
+  min_ansible_version: "2.4"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - focal
+        - bionic
+  galaxy_tags:
+    - golang
+    - development
+

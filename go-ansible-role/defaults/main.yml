@@ -1,0 +1,18 @@
+---
+# defaults
+
+upgrade_pkgs: {}
+install_pkgs: {}
+enable_debug: {}
+
+go_os: "linux"
+go_arch: "amd64"
+go_version: "1.20.3"
+
+go_root: "{{ ansible_env.HOME }}/.goroot"
+go_path: "{{ ansible_env.HOME }}/.gopath"
+shell_profile: "{{ ansible_env.HOME }}/.bashrc"
+
+go_source_dest: "/tmp/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+go_source_url: "https://dl.google.com/go/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+go_source_checksum: "sha256:979694c2c25c735755bf26f4f45e19e64e4811d661dd07b8c010f7a8e18adfca" # v1.20.3

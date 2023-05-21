@@ -1,0 +1,54 @@
+---
+# shell tasks
+
+- name: "Add go envs to PATH"
+  register: shell_export
+  ansible.builtin.lineinfile:
+    mode: 0644
+    create: true
+    state: present
+    line: "{{ item }}"
+    path: "{{ shell_profile }}"
+  with_items:
+    - "export GOOS={{ go_os }}"
+    - "export GOARCH={{ go_arch }}"
+    - "export GOROOT={{ go_root }}"
+    - "export GOPATH={{ go_path }}"
+    - "export PATH=$PATH:{{ go_root }}/bin"
+    - "export PATH=$PATH:{{ go_path }}/bin"
+
+- name: "Show go envs"
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  with_items:
+    - "{{ go_os }}"
+    - "{{ go_arch }}"
+    - "{{ go_root }}"
+    - "{{ go_path }}"
+  when:
+    - enable_debug | default(false) | bool
+
+- name: "Source shell profile"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  ansible.builtin.shell: "bash -ilc 'source {{ shell_profile }}'"
+  when:
+    - shell_export is changed
+
+- name: "Check go version"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: check_gover
+  ansible.builtin.shell: "bash -ilc 'go version'"
+
+- name: "Show go version output"
+  ansible.builtin.debug:
+    msg: "{{ check_gover.stdout }}"
+  when:
+    - check_gover is succeeded
+    - enable_debug | default(true) | bool
+  failed_when:
+    - go_version not in check_gover.stdout
+    

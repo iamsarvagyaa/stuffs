@@ -1,0 +1,44 @@
+---
+# init task
+
+- name: "Upgrade installed pkgs"
+  register: _apt_upgrade
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: true
+    cache_valid_time: 3600
+  when:
+    - upgrade_pkgs | default(false) | bool
+
+- name: "Show apt upgrade output"
+  ansible.builtin.debug:
+    msg: "{{ _apt_upgrade.stdout_lines }}"
+  when:
+    - _apt_upgrade is changed
+    - enable_debug | default(false) | bool
+
+- name: "Install essential pkgs"
+  register: _apt_install
+  ansible.builtin.apt:
+    name:
+      - gcc
+      - git
+      - tar
+      - curl
+      - wget
+      - make
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  when:
+    - _apt_upgrade is succeeded
+    - install_pkgs | default(false) | bool
+
+- name: "Show apt install output"
+  ansible.builtin.debug:
+    msg: "{{ _apt_install.stdout_lines }}"
+  when:
+    - _apt_install is changed
+    - enable_debug | default(false) | bool
+    

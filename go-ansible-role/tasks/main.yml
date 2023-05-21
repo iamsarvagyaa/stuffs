@@ -1,0 +1,12 @@
+---
+# tasks file for Golang
+
+- name: "Initialise task for Ubuntu"
+  ansible.builtin.include_tasks: apt.yml
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: "Setup task"
+  ansible.builtin.include_tasks: setup.yml
+
+- name: "Shell task"
+  ansible.builtin.include_tasks: shell.yml
